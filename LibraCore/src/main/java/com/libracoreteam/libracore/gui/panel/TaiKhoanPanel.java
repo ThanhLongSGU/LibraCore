@@ -1,0 +1,432 @@
+
+package com.libracoreteam.libracore.gui.panel;
+
+import com.formdev.flatlaf.FlatClientProperties;
+import java.awt.Color;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.swing.FontIcon;
+
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
+import com.libracoreteam.libracore.bus.TaiKhoanBUS;
+import com.libracoreteam.libracore.model.TaiKhoan;
+import com.libracoreteam.libracore.gui.dialog.ThemTaiKhoanDialog;
+import com.libracoreteam.libracore.gui.dialog.SuaTaiKhoanDialog;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class TaiKhoanPanel extends javax.swing.JPanel {
+    
+    private final TaiKhoanBUS taiKhoanBUS = new TaiKhoanBUS();
+    private final List<TaiKhoan> currentList = new ArrayList<>(); 
+    private DefaultTableModel tableModel;
+
+    public TaiKhoanPanel() {
+        initComponents();
+        customCompnonets(); 
+        initTable();
+        loadData();
+    }
+    
+    private void customCompnonets() {
+        int iconSize = 16;
+        jButtonThem.setIcon(FontIcon.of(FontAwesomeSolid.PLUS_CIRCLE, iconSize, new Color(21, 110, 71)));
+        jButtonTimKiem.setIcon(FontIcon.of(FontAwesomeSolid.SEARCH, iconSize, new Color(100, 100, 100)));
+        jButtonLamMoi.setIcon(FontIcon.of(FontAwesomeSolid.SYNC_ALT, iconSize, new Color(100, 100, 100)));
+        jButtonSua.setIcon(FontIcon.of(FontAwesomeSolid.EDIT, iconSize, new Color(13, 110, 253)));
+        jButtonXoa.setIcon(FontIcon.of(FontAwesomeSolid.TRASH, iconSize, new Color(220, 53, 69)));
+        jTextFieldTimKiem.putClientProperty("JTextField.placeholderText", "Tìm kiếm");
+        jPasswordField1.putClientProperty(FlatClientProperties.STYLE, "showRevealButton: true");
+    }
+    
+    
+    private void initTable() {
+        tableModel = new DefaultTableModel(
+            new Object [][] {},
+            new String [] {"Mã Tài Khoản", "Tên Đăng Nhập", "Vai Trò"}
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        jTable1.setModel(tableModel);
+        jTable1.setRowHeight(30);   
+        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jTable1.getTableHeader().setReorderingAllowed(false);
+    }
+    
+    private void loadData() {
+        List<TaiKhoan> list = taiKhoanBUS.getAll();
+        Map<Integer, String> roleMap = taiKhoanBUS.getRoleMap();
+        setTableData(list, roleMap);
+        clearFields();
+    }
+    
+    private void setTableData(List<TaiKhoan> list, Map<Integer, String> roleMap) {
+        currentList.clear();
+        tableModel.setRowCount(0);
+        if (list == null) return;
+
+        for (TaiKhoan tk : list) {
+            if (tk == null) continue;
+            currentList.add(tk);
+            tableModel.addRow(new Object[]{
+                tk.getIdTaiKhoan(),
+                tk.getTaiKhoan(),
+                roleMap.getOrDefault(tk.getIdVaiTro(), "Khác")
+            });
+        }
+    }
+
+    private void thucHienTimKiem() {
+        String keyword = jTextFieldTimKiem.getText().trim();
+        if (keyword.isEmpty()) { loadData(); return; }
+    
+        List<TaiKhoan> list = taiKhoanBUS.search(keyword);
+        Map<Integer, String> roleMap = taiKhoanBUS.getRoleMap();
+        setTableData(list, roleMap);
+    }
+    
+    private void lamMoi() {
+        jTextFieldTimKiem.setText("");
+        loadData();
+    }
+    
+    private void clearFields() {
+        jTextFieldMaTaiKhoan.setText("");
+        jTextFieldTenDangNhap.setText("");
+        jPasswordField1.setText("");
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanelLeft = new javax.swing.JPanel();
+        jPanelLeftTop = new javax.swing.JPanel();
+        jPanelCongCu = new javax.swing.JPanel();
+        jPanelTimKiem = new javax.swing.JPanel();
+        jTextFieldTimKiem = new javax.swing.JTextField();
+        jButtonTimKiem = new javax.swing.JButton();
+        jButtonLamMoi = new javax.swing.JButton();
+        jPanelNutDieuKhien = new javax.swing.JPanel();
+        jButtonThem = new javax.swing.JButton();
+        jButtonSua = new javax.swing.JButton();
+        jButtonXoa = new javax.swing.JButton();
+        jPanelBoard = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jPanelRight = new javax.swing.JPanel();
+        jPanelTop = new javax.swing.JPanel();
+        jLabelTitle = new javax.swing.JLabel();
+        jPanelBottom = new javax.swing.JPanel();
+        jPanelFields = new javax.swing.JPanel();
+        jPanelMaTaiKhoan = new javax.swing.JPanel();
+        jLabelMaTaiKhoan = new javax.swing.JLabel();
+        jTextFieldMaTaiKhoan = new javax.swing.JTextField();
+        jPanelTenDangNhap = new javax.swing.JPanel();
+        jLabelTenDangNhap = new javax.swing.JLabel();
+        jTextFieldTenDangNhap = new javax.swing.JTextField();
+        jPanelMatKhau = new javax.swing.JPanel();
+        jLabelMatKhau = new javax.swing.JLabel();
+        jPasswordField1 = new javax.swing.JPasswordField();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        filler4 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        filler5 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        filler6 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        filler7 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        filler8 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+
+        setLayout(new java.awt.BorderLayout());
+
+        jPanelLeft.setPreferredSize(new java.awt.Dimension(600, 60));
+        jPanelLeft.setLayout(new java.awt.BorderLayout());
+
+        jPanelLeftTop.setMinimumSize(new java.awt.Dimension(551, 43));
+        jPanelLeftTop.setLayout(new java.awt.BorderLayout());
+
+        jPanelCongCu.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 20, 0, 20));
+        jPanelCongCu.setLayout(new java.awt.BorderLayout());
+
+        jTextFieldTimKiem.setPreferredSize(new java.awt.Dimension(150, 40));
+        jTextFieldTimKiem.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldTimKiemKeyPressed(evt);
+            }
+        });
+        jPanelTimKiem.add(jTextFieldTimKiem);
+
+        jButtonTimKiem.setPreferredSize(new java.awt.Dimension(40, 40));
+        jButtonTimKiem.addActionListener(this::jButtonTimKiemActionPerformed);
+        jPanelTimKiem.add(jButtonTimKiem);
+
+        jButtonLamMoi.setPreferredSize(new java.awt.Dimension(40, 40));
+        jButtonLamMoi.addActionListener(this::jButtonLamMoiActionPerformed);
+        jPanelTimKiem.add(jButtonLamMoi);
+
+        jPanelCongCu.add(jPanelTimKiem, java.awt.BorderLayout.WEST);
+
+        jButtonThem.setText("Thêm");
+        jButtonThem.setPreferredSize(new java.awt.Dimension(90, 40));
+        jButtonThem.addActionListener(this::jButtonThemActionPerformed);
+        jPanelNutDieuKhien.add(jButtonThem);
+
+        jButtonSua.setText("Sửa");
+        jButtonSua.setPreferredSize(new java.awt.Dimension(90, 40));
+        jButtonSua.addActionListener(this::jButtonSuaActionPerformed);
+        jPanelNutDieuKhien.add(jButtonSua);
+
+        jButtonXoa.setText("Xóa");
+        jButtonXoa.setPreferredSize(new java.awt.Dimension(90, 40));
+        jButtonXoa.addActionListener(this::jButtonXoaActionPerformed);
+        jPanelNutDieuKhien.add(jButtonXoa);
+
+        jPanelCongCu.add(jPanelNutDieuKhien, java.awt.BorderLayout.EAST);
+
+        jPanelLeftTop.add(jPanelCongCu, java.awt.BorderLayout.CENTER);
+
+        jPanelLeft.add(jPanelLeftTop, java.awt.BorderLayout.NORTH);
+
+        jPanelBoard.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        jPanelBoard.setPreferredSize(new java.awt.Dimension(452, 402));
+        jPanelBoard.setLayout(new java.awt.BorderLayout());
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "ID", "Tên Đăng Nhập"
+            }
+        ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
+
+        jPanelBoard.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        jPanelLeft.add(jPanelBoard, java.awt.BorderLayout.CENTER);
+
+        add(jPanelLeft, java.awt.BorderLayout.CENTER);
+
+        jPanelRight.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 0, 50, 20));
+        jPanelRight.setMinimumSize(new java.awt.Dimension(300, 306));
+        jPanelRight.setPreferredSize(new java.awt.Dimension(306, 306));
+        jPanelRight.setLayout(new java.awt.BorderLayout());
+
+        jLabelTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        jLabelTitle.setText("THÔNG TIN TÀI KHOẢN");
+        jPanelTop.add(jLabelTitle);
+
+        jPanelRight.add(jPanelTop, java.awt.BorderLayout.PAGE_START);
+
+        jPanelBottom.setLayout(new javax.swing.BoxLayout(jPanelBottom, javax.swing.BoxLayout.Y_AXIS));
+
+        jPanelFields.setLayout(new javax.swing.BoxLayout(jPanelFields, javax.swing.BoxLayout.Y_AXIS));
+
+        jPanelMaTaiKhoan.setLayout(new java.awt.GridLayout(0, 1));
+
+        jLabelMaTaiKhoan.setText("Mã Tài Khoản");
+        jPanelMaTaiKhoan.add(jLabelMaTaiKhoan);
+
+        jTextFieldMaTaiKhoan.setEditable(false);
+        jTextFieldMaTaiKhoan.setBackground(new java.awt.Color(255, 255, 255));
+        jTextFieldMaTaiKhoan.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        jPanelMaTaiKhoan.add(jTextFieldMaTaiKhoan);
+
+        jPanelFields.add(jPanelMaTaiKhoan);
+
+        jPanelTenDangNhap.setLayout(new java.awt.GridLayout(0, 1));
+
+        jLabelTenDangNhap.setText("Tên Đăng Nhập");
+        jPanelTenDangNhap.add(jLabelTenDangNhap);
+
+        jTextFieldTenDangNhap.setEditable(false);
+        jTextFieldTenDangNhap.setBackground(new java.awt.Color(255, 255, 255));
+        jTextFieldTenDangNhap.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        jPanelTenDangNhap.add(jTextFieldTenDangNhap);
+
+        jPanelFields.add(jPanelTenDangNhap);
+
+        jPanelMatKhau.setLayout(new java.awt.GridLayout(0, 1));
+
+        jLabelMatKhau.setText("Mật Khẩu");
+        jPanelMatKhau.add(jLabelMatKhau);
+
+        jPasswordField1.setEditable(false);
+        jPasswordField1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelMatKhau.add(jPasswordField1);
+
+        jPanelFields.add(jPanelMatKhau);
+        jPanelFields.add(filler1);
+        jPanelFields.add(filler2);
+        jPanelFields.add(filler3);
+        jPanelFields.add(filler4);
+        jPanelFields.add(filler5);
+        jPanelFields.add(filler6);
+        jPanelFields.add(filler7);
+        jPanelFields.add(filler8);
+
+        jPanelBottom.add(jPanelFields);
+
+        jPanelRight.add(jPanelBottom, java.awt.BorderLayout.CENTER);
+
+        add(jPanelRight, java.awt.BorderLayout.EAST);
+    }// </editor-fold>//GEN-END:initComponents
+  
+    private void jButtonThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonThemActionPerformed
+        com.libracoreteam.libracore.bus.NhanVienBUS nhanVienBUS = new com.libracoreteam.libracore.bus.NhanVienBUS();
+        java.util.List<com.libracoreteam.libracore.model.NhanVien> dsNhanVien = nhanVienBUS.getActive();
+        
+        boolean coNguoiChuaCoTK = false;
+        for (com.libracoreteam.libracore.model.NhanVien nv : dsNhanVien) {
+            if (nv.getIdTaiKhoan() == null) {
+                coNguoiChuaCoTK = true;
+                break;
+            }
+        }
+        
+        if (!coNguoiChuaCoTK) {
+            JOptionPane.showMessageDialog(this, 
+                "Hiện tại tất cả nhân viên đều đã được cấp tài khoản!", 
+                "Thông báo", 
+                JOptionPane.INFORMATION_MESSAGE);
+            return; 
+        }
+        
+        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        ThemTaiKhoanDialog dialog = new ThemTaiKhoanDialog(parentFrame, true);
+        dialog.setVisible(true);
+        
+        if (dialog.isSaved()) {
+            loadData(); 
+        }
+    }//GEN-LAST:event_jButtonThemActionPerformed
+
+    private void jButtonSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSuaActionPerformed
+        int row = jTable1.getSelectedRow();
+        if (row < 0 || row >= currentList.size()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn tài khoản cần sửa!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        TaiKhoan selected = currentList.get(row);
+        
+        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        SuaTaiKhoanDialog dialog = new SuaTaiKhoanDialog(parentFrame, true, selected);
+        dialog.setVisible(true);
+        
+        if (dialog.isSaved()) {
+            loadData();
+        }
+    }//GEN-LAST:event_jButtonSuaActionPerformed
+
+    private void jButtonXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonXoaActionPerformed
+        int row = jTable1.getSelectedRow();
+        if (row < 0 || row >= currentList.size()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn tài khoản cần xóa!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+   
+        TaiKhoan selected = currentList.get(row);
+        
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Bạn có chắc chắn muốn xóa tài khoản: " + selected.getTaiKhoan() + "?",
+                "Xác nhận xóa",
+                JOptionPane.YES_NO_OPTION
+        );
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                if (taiKhoanBUS.delete(selected.getIdTaiKhoan())) {
+                    JOptionPane.showMessageDialog(this, "Xóa tài khoản thành công!");
+                    loadData();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Xóa tài khoản thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi hệ thống: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jButtonXoaActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        int row = jTable1.getSelectedRow();
+        
+        if (row >= 0 && row < currentList.size()) {
+            TaiKhoan tk = currentList.get(row);
+            
+            jTextFieldMaTaiKhoan.setText(String.valueOf(tk.getIdTaiKhoan()));
+            jTextFieldTenDangNhap.setText(tk.getTaiKhoan() != null ? tk.getTaiKhoan() : "");
+            jPasswordField1.setText(tk.getMatKhau() != null ? tk.getMatKhau() : "");
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void jButtonLamMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLamMoiActionPerformed
+        lamMoi();
+    }//GEN-LAST:event_jButtonLamMoiActionPerformed
+
+    private void jButtonTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTimKiemActionPerformed
+        thucHienTimKiem();
+    }//GEN-LAST:event_jButtonTimKiemActionPerformed
+
+    private void jTextFieldTimKiemKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldTimKiemKeyPressed
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            thucHienTimKiem();
+        }
+    }//GEN-LAST:event_jTextFieldTimKiemKeyPressed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler2;
+    private javax.swing.Box.Filler filler3;
+    private javax.swing.Box.Filler filler4;
+    private javax.swing.Box.Filler filler5;
+    private javax.swing.Box.Filler filler6;
+    private javax.swing.Box.Filler filler7;
+    private javax.swing.Box.Filler filler8;
+    private javax.swing.JButton jButtonLamMoi;
+    private javax.swing.JButton jButtonSua;
+    private javax.swing.JButton jButtonThem;
+    private javax.swing.JButton jButtonTimKiem;
+    private javax.swing.JButton jButtonXoa;
+    private javax.swing.JLabel jLabelMaTaiKhoan;
+    private javax.swing.JLabel jLabelMatKhau;
+    private javax.swing.JLabel jLabelTenDangNhap;
+    private javax.swing.JLabel jLabelTitle;
+    private javax.swing.JPanel jPanelBoard;
+    private javax.swing.JPanel jPanelBottom;
+    private javax.swing.JPanel jPanelCongCu;
+    private javax.swing.JPanel jPanelFields;
+    private javax.swing.JPanel jPanelLeft;
+    private javax.swing.JPanel jPanelLeftTop;
+    private javax.swing.JPanel jPanelMaTaiKhoan;
+    private javax.swing.JPanel jPanelMatKhau;
+    private javax.swing.JPanel jPanelNutDieuKhien;
+    private javax.swing.JPanel jPanelRight;
+    private javax.swing.JPanel jPanelTenDangNhap;
+    private javax.swing.JPanel jPanelTimKiem;
+    private javax.swing.JPanel jPanelTop;
+    private javax.swing.JPasswordField jPasswordField1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextFieldMaTaiKhoan;
+    private javax.swing.JTextField jTextFieldTenDangNhap;
+    private javax.swing.JTextField jTextFieldTimKiem;
+    // End of variables declaration//GEN-END:variables
+}

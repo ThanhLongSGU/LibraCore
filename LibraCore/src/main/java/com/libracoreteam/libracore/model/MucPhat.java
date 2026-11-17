@@ -1,21 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.libracoreteam.libracore.model;
 
 import java.math.BigDecimal;
 
-/**
- *
- * @author luuis
- */
+
 public class MucPhat {
     private int idMucPhat;
     private String tenMucPhat;
-    private String loaiPhat; // "PerDay", "Fixed"
+    private String loaiPhat; 
     private BigDecimal soTienPhat;
     private String moTa;
+    private boolean hoatDong;
     
     public MucPhat() {
     }
@@ -36,7 +31,6 @@ public class MucPhat {
         this.moTa = moTa;
     }
     
-    // Getters
     public int getIdMucPhat() {
         return idMucPhat;
     }
@@ -57,7 +51,10 @@ public class MucPhat {
         return moTa;
     }
     
-    // Setters
+    public boolean isHoatDong() {
+        return hoatDong;
+    }
+    
     public void setIdMucPhat(int idMucPhat) {
         this.idMucPhat = idMucPhat;
     }
@@ -78,7 +75,10 @@ public class MucPhat {
         this.moTa = moTa;
     }
     
-    // Utility methods
+    public void setHoatDong(boolean hoatDong) {
+        this.hoatDong = hoatDong;
+    }
+    
     public boolean isPerDay() {
         return "PerDay".equals(loaiPhat);
     }

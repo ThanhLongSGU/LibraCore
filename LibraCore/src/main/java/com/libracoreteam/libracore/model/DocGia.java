@@ -1,15 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.libracoreteam.libracore.model;
 
 import java.time.LocalDate;
 
-/**
- *
- * @author luuis
- */
+
 public class DocGia {
     private int idDocGia;
     private String tenDocGia;
@@ -41,7 +35,6 @@ public class DocGia {
         this.hoatDong = true;
     }
     
-    // Getters
     public int getIdDocGia() {
         return idDocGia;
     }
@@ -66,7 +59,6 @@ public class DocGia {
         return email;
     }
     
-    // Setters
     public void setIdDocGia(int idDocGia) {
         this.idDocGia = idDocGia;
     }

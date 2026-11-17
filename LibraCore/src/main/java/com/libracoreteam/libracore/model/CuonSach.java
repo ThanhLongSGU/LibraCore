@@ -1,19 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.libracoreteam.libracore.model;
 
-/**
- *
- * @author luuis
- */
 public class CuonSach {
     private int idCuonSach;
     private int idSach;
-    private String tinhTrangSach; // Enum: Tot, Hong, Mat
-    private String trangThaiMuon; // Enum: Ranh, DangMuon
+    private String maCuonSach;
+    private String tinhTrangSach; 
+    private String trangThaiMuon; 
     private Boolean daHuy;
+    private Integer idChiTietPhieuNhap;
+    
     
     private Sach sach;
     
@@ -35,13 +31,16 @@ public class CuonSach {
         this.daHuy = false;
     }
     
-     // Getters
     public int getIdCuonSach() {
         return idCuonSach;
     }
     
     public int getIdSach() {
         return idSach;
+    }
+
+    public String getMaCuonSach() {
+        return maCuonSach;
     }
     
     public String getTinhTrangSach() {
@@ -56,13 +55,22 @@ public class CuonSach {
         return sach;
     }
     
-    // Setters
+    public Integer getidChiTietPhieuNhap(){
+        return this.idChiTietPhieuNhap;
+    }
+
+    
+    
     public void setIdCuonSach(int idCuonSach) {
         this.idCuonSach = idCuonSach;
     }
     
     public void setIdSach(int idSach) {
         this.idSach = idSach;
+    }
+
+    public void setMaCuonSach(String maCuonSach) {
+        this.maCuonSach = maCuonSach;
     }
     
     public void setTinhTrangSach(String tinhTrangSach) {
@@ -77,6 +85,10 @@ public class CuonSach {
         this.sach = sach;
     }
     
+    public void setIdChiTietPhieuNhap(int idChiTietPhieuNhap) {
+        this.idChiTietPhieuNhap = idChiTietPhieuNhap;
+    }
+    
     public Boolean getDaHuy() {
         return daHuy;
     }
@@ -85,7 +97,6 @@ public class CuonSach {
         this.daHuy = daHuy;
     }
     
-    // Utility methods
     public boolean isRanh() {
         return "Ranh".equals(trangThaiMuon);
     }
@@ -107,6 +118,7 @@ public class CuonSach {
         return "CuonSach{" +
                 "idCuonSach=" + idCuonSach +
                 ", idSach=" + idSach +
+                ", maCuonSach='" + maCuonSach + '\'' +
                 ", tinhTrangSach='" + tinhTrangSach + '\'' +
                 ", trangThaiMuon='" + trangThaiMuon + '\'' +
                 '}';

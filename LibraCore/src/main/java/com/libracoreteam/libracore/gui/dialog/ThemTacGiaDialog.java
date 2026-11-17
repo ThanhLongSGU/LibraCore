@@ -7,11 +7,9 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 
 public class ThemTacGiaDialog extends JDialog {
-    // ===== Fields =====
     private JTextField txtTenTacGia;
     private JSpinner spnNgaySinh;
     private JTextField txtNoiSinh;
@@ -33,38 +31,29 @@ public class ThemTacGiaDialog extends JDialog {
                         "[]"
                 )
         );
-
-        // ===== Tên tác giả =====
         txtTenTacGia = new JTextField(25);
         formPanel.add(new JLabel("Tên tác giả:"));
         formPanel.add(txtTenTacGia);
-
-        // ===== Ngày sinh =====
-        SpinnerDateModel dateModel = new SpinnerDateModel();
+        SpinnerDateModel dateModel = new SpinnerDateModel(new Date(), null, null, java.util.Calendar.DAY_OF_MONTH);
         spnNgaySinh = new JSpinner(dateModel);
         JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spnNgaySinh, "dd/MM/yyyy");
         spnNgaySinh.setEditor(dateEditor);
-        spnNgaySinh.setValue(new Date()); // Mặc định là ngày hiện tại
         
         formPanel.add(new JLabel("Ngày sinh:"));
         formPanel.add(spnNgaySinh);
 
-        // ===== Nơi sinh =====
         txtNoiSinh = new JTextField(25);
         formPanel.add(new JLabel("Nơi sinh:"));
         formPanel.add(txtNoiSinh);
 
-        // ===== Số điện thoại =====
         txtSDT = new JTextField(15);
         formPanel.add(new JLabel("Số điện thoại:"));
         formPanel.add(txtSDT);
 
-        // ===== Buttons =====
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         btnLuu = new JButton("Xác nhận");
         btnHuy = new JButton("Hủy");
-        
-        // Thêm icon cho buttons
+
         int iconSize = 16;
         btnLuu.setIcon(FontIcon.of(FontAwesomeSolid.CHECK_CIRCLE, iconSize, new Color(40, 167, 69)));
         btnHuy.setIcon(FontIcon.of(FontAwesomeSolid.TIMES_CIRCLE, iconSize, new Color(220, 53, 69)));
@@ -75,7 +64,6 @@ public class ThemTacGiaDialog extends JDialog {
         btnLuu.addActionListener(e -> onSave());
         btnHuy.addActionListener(e -> dispose());
 
-        // ===== Layout tổng =====
         setLayout(new BorderLayout());
         add(formPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
@@ -86,22 +74,31 @@ public class ThemTacGiaDialog extends JDialog {
     }
 
     private void onSave() {
-        // Chuyển Date sang LocalDate
-        Date selectedDate = (Date) spnNgaySinh.getValue();
-        LocalDate ngaySinh = selectedDate.toInstant()
-                .atZone(ZoneId.systemDefault())
+        String tenTacGia = txtTenTacGia.getText().trim();
+        String noiSinh = txtNoiSinh.getText().trim();
+        String sdt = txtSDT.getText().trim();
+
+        if (tenTacGia.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Tên tác giả không được để trống!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        java.util.Date selectedDate = (java.util.Date) spnNgaySinh.getValue();
+        java.time.LocalDate ngaySinh = selectedDate.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
                 .toLocalDate();
-        
-        System.out.println("=== Thêm tác giả ===");
-        System.out.println("Tên tác giả: " + txtTenTacGia.getText());
-        System.out.println("Ngày sinh: " + ngaySinh);
-        System.out.println("Nơi sinh: " + txtNoiSinh.getText());
-        System.out.println("Số điện thoại: " + txtSDT.getText());
-        
-        // TODO: Validate dữ liệu trước khi lưu
-        // TODO: Gọi BUS/Service để insert vào DB
-        
-        dispose();
+        if (ngaySinh.isAfter(LocalDate.now())) {
+            JOptionPane.showMessageDialog(this, "Không được nhập quá so với ngày hiện tại!", "Lỗi ngày sinh", JOptionPane.ERROR_MESSAGE);
+            return; 
+        }
+
+        com.libracoreteam.libracore.model.TacGia tacGia = new com.libracoreteam.libracore.model.TacGia(tenTacGia, ngaySinh, noiSinh, sdt);
+        com.libracoreteam.libracore.dao.TacGiaDAO tacGiaDAO = new com.libracoreteam.libracore.dao.TacGiaDAO();
+        if (tacGiaDAO.insert(tacGia)) {
+            JOptionPane.showMessageDialog(this, "Thêm tác giả thành công!");
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Lỗi khi lưu tác giả vào cơ sở dữ liệu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
-

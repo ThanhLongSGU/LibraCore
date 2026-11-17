@@ -1,48 +1,38 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.libracoreteam.libracore.model;
 
 import java.math.BigDecimal;
 
-/**
- *
- * @author luuis
- */
+
 public class ChiTietPhieuNhap {
     private int idChiTietPhieuNhap;
     private int idPhieuNhap;
     private int idSach;
     private Integer soLuong;
     private BigDecimal giaTien;
-    private String maDauSach;
     
     private Sach sach;
     
     public ChiTietPhieuNhap() {
     }
     
-    public ChiTietPhieuNhap(int idChiTietPhieuNhap, int idPhieuNhap, int idSach, 
-                            Integer soLuong, BigDecimal giaTien, String maDauSach) {
+    public ChiTietPhieuNhap(int idChiTietPhieuNhap, int idPhieuNhap, int idSach,
+                            Integer soLuong, BigDecimal giaTien) {
         this.idChiTietPhieuNhap = idChiTietPhieuNhap;
         this.idPhieuNhap = idPhieuNhap;
         this.idSach = idSach;
         this.soLuong = soLuong;
         this.giaTien = giaTien;
-        this.maDauSach = maDauSach;
     }
     
-    public ChiTietPhieuNhap(int idPhieuNhap, int idSach, Integer soLuong, 
-                            BigDecimal giaTien, String maDauSach) {
+    public ChiTietPhieuNhap(int idPhieuNhap, int idSach, Integer soLuong,
+                            BigDecimal giaTien) {
         this.idPhieuNhap = idPhieuNhap;
         this.idSach = idSach;
         this.soLuong = soLuong;
         this.giaTien = giaTien;
-        this.maDauSach = maDauSach;
     }
     
-    // Getters
     public int getIdChiTietPhieuNhap() {
         return idChiTietPhieuNhap;
     }
@@ -63,15 +53,10 @@ public class ChiTietPhieuNhap {
         return giaTien;
     }
     
-    public String getMaDauSach() {
-        return maDauSach;
-    }
-    
     public Sach getSach() {
         return sach;
     }
     
-    // Setters
     public void setIdChiTietPhieuNhap(int idChiTietPhieuNhap) {
         this.idChiTietPhieuNhap = idChiTietPhieuNhap;
     }
@@ -92,15 +77,10 @@ public class ChiTietPhieuNhap {
         this.giaTien = giaTien;
     }
     
-    public void setMaDauSach(String maDauSach) {
-        this.maDauSach = maDauSach;
-    }
-    
     public void setSach(Sach sach) {
         this.sach = sach;
     }
     
-    // Utility method
     public BigDecimal tinhThanhTien() {
         if (soLuong != null && giaTien != null) {
             return giaTien.multiply(BigDecimal.valueOf(soLuong));

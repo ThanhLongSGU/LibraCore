@@ -1,16 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.libracoreteam.libracore.model;
 
 import java.time.LocalDate;
 
 
-/**
- *
- * @author luuis
- */
+
 public class TacGia {
     private int idTacGia;
     private String tenTacGia;
@@ -38,8 +32,6 @@ public class TacGia {
         this.sdt = sdt;
         this.hoatDong = true;
     }
-    
-    // Getters và Setters
     public int getIdTacGia() {
         return idTacGia;
     }
