@@ -6,24 +6,28 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class ConfigUtility {
-    private static final Properties properties = new Properties();
-
-    static {
-        try (InputStream input = ConfigUtility.class
-                .getClassLoader()
-                .getResourceAsStream("config.properties")) {
-
-            if (input == null) {
-                throw new RuntimeException("Không tìm thấy config.properties");
-            }
-            properties.load(input);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Lỗi load config.properties", e);
-        }
-    }
+    private static Properties properties;
 
     public static String getConfig(String key) {
-        return properties.getProperty(key);
+        return getProperties().getProperty(key);
+    }
+
+    private static synchronized Properties getProperties() {
+        if (properties != null) {
+            return properties;
+        }
+
+        try (InputStream input = ConfigUtility.class.getClassLoader().getResourceAsStream("config.properties")) {
+            if (input == null) {
+                throw new IllegalStateException("Không tìm thấy config.properties");
+            }
+
+            Properties loaded = new Properties();
+            loaded.load(input);
+            properties = loaded;
+            return properties;
+        } catch (IOException e) {
+            throw new IllegalStateException("Không thể đọc config.properties", e);
+        }
     }
 }
