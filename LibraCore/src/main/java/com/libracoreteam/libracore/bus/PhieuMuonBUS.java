@@ -2,8 +2,6 @@ package com.libracoreteam.libracore.bus;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -205,13 +203,7 @@ public class PhieuMuonBUS {
   }
 
   private void updateChiTiet(Connection conn, ChiTietPhieuMuon ct) throws SQLException {
-    String sql = "UPDATE ChiTietPhieuMuon SET NgayTra = ?, TinhTrangTra = ? WHERE IdChiTietPhieuMuon = ?";
-    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-      stmt.setDate(1, ct.getNgayTra() != null ? Date.valueOf(ct.getNgayTra()) : null);
-      stmt.setString(2, ct.getTinhTrangTra());
-      stmt.setInt(3, ct.getIdChiTietPhieuMuon());
-      stmt.executeUpdate();
-    }
+    phieuMuonDAO.updateChiTietPhieuMuon(ct, conn);
   }
 
   private String mapTinhTrangSach(String tinhTrangTra) {

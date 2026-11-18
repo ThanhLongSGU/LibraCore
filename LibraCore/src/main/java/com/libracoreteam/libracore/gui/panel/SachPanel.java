@@ -107,6 +107,8 @@ public class SachPanel extends javax.swing.JPanel {
         jScrollPaneMoTa = new javax.swing.JScrollPane();
         jTextAreaMoTa = new javax.swing.JTextArea();
         jPanelGiaSach = new javax.swing.JPanel();
+        javax.swing.JLabel jLabelGiaSach = new javax.swing.JLabel("Giá nhập mặc định:");
+        jTextFieldGiaSach = new javax.swing.JTextField();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -341,6 +343,10 @@ public class SachPanel extends javax.swing.JPanel {
 
         jPanelGiaSach.setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 0, 3, 0));
         jPanelGiaSach.setLayout(new java.awt.GridLayout(0, 1));
+        jPanelGiaSach.add(jLabelGiaSach);
+        jTextFieldGiaSach.setEditable(false);
+        jTextFieldGiaSach.setFocusable(false);
+        jPanelGiaSach.add(jTextFieldGiaSach);
         jPanelFields.add(jPanelGiaSach);
 
         jPanelBottom.add(jPanelFields);
@@ -502,6 +508,7 @@ public class SachPanel extends javax.swing.JPanel {
             return;
 
         jTextFieldMaSach.setText(String.valueOf(s.getIdSach()));
+        jTextFieldGiaSach.setText(s.getGiaNhap() != null ? s.getGiaNhap().toPlainString() + " đ" : "0 đ");
         jTextFieldTenSach.setText(nullSafe(s.getTenSach()));
         jTextFieldNamXuatBan.setText(s.getNamXuatBan() != null ? String.valueOf(s.getNamXuatBan()) : "");
         jTextFieldSoTrang.setText(s.getSoTrang() != null ? String.valueOf(s.getSoTrang()) : "");
@@ -531,6 +538,7 @@ public class SachPanel extends javax.swing.JPanel {
 
     private void clearDetail() {
         jTextFieldMaSach.setText("");
+        jTextFieldGiaSach.setText("");
         jTextFieldTenSach.setText("");
         jTextAreaTacGia.setText("");
         jTextAreaTheLoai.setText("");
@@ -1009,6 +1017,7 @@ public class SachPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanelCongCu;
     private javax.swing.JPanel jPanelFields;
     private javax.swing.JPanel jPanelGiaSach;
+    private javax.swing.JTextField jTextFieldGiaSach;
     private javax.swing.JPanel jPanelLeft;
     private javax.swing.JPanel jPanelLeftTop;
     private javax.swing.JPanel jPanelMaSach;

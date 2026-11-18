@@ -420,6 +420,7 @@ CREATE TABLE IF NOT EXISTS `sach` (
   `TenSach` varchar(255) DEFAULT NULL,
   `MoTa` varchar(1000) DEFAULT NULL,
   `SoTrang` int DEFAULT NULL,
+  `GiaNhap` decimal(12,2) NOT NULL DEFAULT '0.00',
   `HoatDong` tinyint(1) NOT NULL,
   PRIMARY KEY (`id_Sach`),
   KEY `idx_sach_tensach` (`TenSach`),
@@ -429,17 +430,17 @@ CREATE TABLE IF NOT EXISTS `sach` (
 
 -- Dumping data for table libracore.sach: ~1 rows (approximately)
 DELETE FROM `sach`;
-INSERT INTO `sach` (`id_Sach`, `id_NXB`, `NamXuatBan`, `TenSach`, `MoTa`, `SoTrang`, `HoatDong`) VALUES
-	(1, 4, '1999', 'Sherlock Holmes', 'Tuyển tập truyện trinh thám kinh điển.', 500, 1),
-	(2, 4, '2018', 'Cho tôi xin một vé đi tuổi thơ', 'Tác phẩm dành cho thiếu nhi và người trưởng thành.', 208, 1),
-	(3, 4, '1941', 'Dế Mèn phiêu lưu ký', 'Cuộc phiêu lưu của chú dế qua nhiều vùng đất.', 180, 1),
-	(4, 4, '1957', 'Đất rừng phương Nam', 'Câu chuyện về thiên nhiên và con người Nam Bộ.', 320, 1),
-	(5, 4, '2021', 'Hành trình khám phá vũ trụ', 'Kiến thức nhập môn về các hành tinh và vũ trụ.', 240, 1),
-	(6, 4, '2022', 'Tư duy khoa học căn bản', 'Giới thiệu phương pháp quan sát và tư duy khoa học.', 216, 1),
-	(7, 4, '2020', 'Lược sử Việt Nam', 'Tóm lược các giai đoạn lịch sử Việt Nam.', 350, 1),
-	(8, 4, '2023', 'Những miền đất cổ', 'Khảo cứu về các nền văn minh cổ đại.', 288, 1),
-	(9, 4, '2024', 'Lập trình Java thực hành', 'Bài tập thực hành lập trình hướng đối tượng Java.', 410, 1),
-	(10, 4, '2024', 'Cơ sở dữ liệu ứng dụng', 'Thiết kế, truy vấn và quản trị cơ sở dữ liệu.', 390, 1);
+INSERT INTO `sach` (`id_Sach`, `id_NXB`, `NamXuatBan`, `TenSach`, `MoTa`, `SoTrang`, `GiaNhap`, `HoatDong`) VALUES
+	(1, 4, '1999', 'Sherlock Holmes', 'Tuyển tập truyện trinh thám kinh điển.', 500, 500000.00, 1),
+	(2, 4, '2018', 'Cho tôi xin một vé đi tuổi thơ', 'Tác phẩm dành cho thiếu nhi và người trưởng thành.', 208, 450000.00, 1),
+	(3, 4, '1941', 'Dế Mèn phiêu lưu ký', 'Cuộc phiêu lưu của chú dế qua nhiều vùng đất.', 180, 400000.00, 1),
+	(4, 4, '1957', 'Đất rừng phương Nam', 'Câu chuyện về thiên nhiên và con người Nam Bộ.', 320, 425000.00, 1),
+	(5, 4, '2021', 'Hành trình khám phá vũ trụ', 'Kiến thức nhập môn về các hành tinh và vũ trụ.', 240, 550000.00, 1),
+	(6, 4, '2022', 'Tư duy khoa học căn bản', 'Giới thiệu phương pháp quan sát và tư duy khoa học.', 216, 600000.00, 1),
+	(7, 4, '2020', 'Lược sử Việt Nam', 'Tóm lược các giai đoạn lịch sử Việt Nam.', 350, 500000.00, 1),
+	(8, 4, '2023', 'Những miền đất cổ', 'Khảo cứu về các nền văn minh cổ đại.', 288, 475000.00, 1),
+	(9, 4, '2024', 'Lập trình Java thực hành', 'Bài tập thực hành lập trình hướng đối tượng Java.', 410, 650000.00, 1),
+	(10, 4, '2024', 'Cơ sở dữ liệu ứng dụng', 'Thiết kế, truy vấn và quản trị cơ sở dữ liệu.', 390, 700000.00, 1);
 
 -- Dumping structure for table libracore.sach_tacgia
 CREATE TABLE IF NOT EXISTS `sach_tacgia` (

@@ -24,6 +24,7 @@ public class SuaSachDialog extends JDialog {
     private JTextField txtTenSach;
     private JTextField txtNamXB;
     private JTextField txtSoTrang;
+    private JTextField txtGiaNhap;
 
     private JTextArea txtMoTa;
 
@@ -98,6 +99,10 @@ public class SuaSachDialog extends JDialog {
         txtSoTrang = new JTextField(10);
         formPanel.add(new JLabel("Số trang:"));
         formPanel.add(txtSoTrang);
+
+        txtGiaNhap = new JTextField(10);
+        formPanel.add(new JLabel("Giá nhập mặc định:"));
+        formPanel.add(txtGiaNhap);
 
         txtMoTa = new JTextArea(4, 25);
         txtMoTa.setLineWrap(true);
@@ -175,6 +180,7 @@ public class SuaSachDialog extends JDialog {
                     idNXB,
                     txtNamXB.getText(),
                     txtSoTrang.getText(),
+                    txtGiaNhap.getText(),
                     txtMoTa.getText(),
                     tacGiaIds,
                     theLoaiIds
@@ -217,6 +223,7 @@ public class SuaSachDialog extends JDialog {
             txtTenSach.setText(s.getTenSach());
             txtNamXB.setText(s.getNamXuatBan() != null ? String.valueOf(s.getNamXuatBan()) : "");
             txtSoTrang.setText(s.getSoTrang() != null ? String.valueOf(s.getSoTrang()) : "");
+            txtGiaNhap.setText(s.getGiaNhap() != null ? s.getGiaNhap().toPlainString() : "0");
             txtMoTa.setText(s.getMoTa() != null ? s.getMoTa() : "");
 
             if (s.getIdNXB() != null) {

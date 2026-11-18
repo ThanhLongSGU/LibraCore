@@ -9,6 +9,7 @@ import com.libracoreteam.libracore.model.Sach;
 import com.libracoreteam.libracore.model.TacGia;
 import com.libracoreteam.libracore.model.TheLoai;
 
+import java.math.BigDecimal;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -102,11 +103,24 @@ public class SachBUS {
             String moTa,
             List<Integer> tacGiaIds,
             List<Integer> theLoaiIds) {
+        return create(tenSach, idNXB, namXBText, soTrangText, "0", moTa, tacGiaIds, theLoaiIds);
+    }
+
+    public Sach create(
+            String tenSach,
+            Integer idNXB,
+            String namXBText,
+            String soTrangText,
+            String giaNhapText,
+            String moTa,
+            List<Integer> tacGiaIds,
+            List<Integer> theLoaiIds) {
         tenSach = safeTrim(tenSach);
         moTa = safeTrim(moTa);
 
         Integer namXB = parseNullableInt(namXBText, "Năm xuất bản");
         Integer soTrang = parseNullableInt(soTrangText, "Số trang");
+        BigDecimal giaNhap = parseGiaNhap(giaNhapText);
 
         List<Integer> tgIds = normalizeIds(tacGiaIds);
         List<Integer> tlIds = normalizeIds(theLoaiIds);
@@ -118,6 +132,7 @@ public class SachBUS {
         s.setIdNXB(normalizeNullableFk(idNXB));
         s.setNamXuatBan(namXB);
         s.setSoTrang(soTrang);
+        s.setGiaNhap(giaNhap);
         s.setMoTa(moTa);
         s.setHoatDong(true);
 
@@ -137,6 +152,19 @@ public class SachBUS {
             String moTa,
             List<Integer> tacGiaIds,
             List<Integer> theLoaiIds) {
+        return update(idSach, tenSach, idNXB, namXBText, soTrangText, "0", moTa, tacGiaIds, theLoaiIds);
+    }
+
+    public boolean update(
+            int idSach,
+            String tenSach,
+            Integer idNXB,
+            String namXBText,
+            String soTrangText,
+            String giaNhapText,
+            String moTa,
+            List<Integer> tacGiaIds,
+            List<Integer> theLoaiIds) {
         if (idSach <= 0) {
             throw new IllegalArgumentException("ID sách không hợp lệ");
         }
@@ -146,6 +174,7 @@ public class SachBUS {
 
         Integer namXB = parseNullableInt(namXBText, "Năm xuất bản");
         Integer soTrang = parseNullableInt(soTrangText, "Số trang");
+        BigDecimal giaNhap = parseGiaNhap(giaNhapText);
 
         List<Integer> tgIds = normalizeIds(tacGiaIds);
         List<Integer> tlIds = normalizeIds(theLoaiIds);
@@ -158,6 +187,7 @@ public class SachBUS {
         s.setIdNXB(normalizeNullableFk(idNXB));
         s.setNamXuatBan(namXB);
         s.setSoTrang(soTrang);
+        s.setGiaNhap(giaNhap);
         s.setMoTa(moTa);
 
         return sachDAO.updateWithRelations(s, tgIds, tlIds);
@@ -242,6 +272,25 @@ public class SachBUS {
             return Integer.parseInt(s);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(fieldName + " phải là số hợp lệ");
+        }
+    }
+
+    private static BigDecimal parseGiaNhap(String text) {
+        String value = safeTrim(text);
+        if (value == null || value.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        try {
+            BigDecimal giaNhap = new BigDecimal(value.replace(",", ""));
+            if (giaNhap.signum() < 0 || giaNhap.compareTo(new BigDecimal("9999999999.99")) > 0) {
+                throw new IllegalArgumentException("Giá nhập phải từ 0 đến 9.999.999.999,99");
+            }
+            if (giaNhap.stripTrailingZeros().scale() > 2) {
+                throw new IllegalArgumentException("Giá nhập chỉ được có tối đa 2 chữ số thập phân");
+            }
+            return giaNhap;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Giá nhập phải là số hợp lệ");
         }
     }
 

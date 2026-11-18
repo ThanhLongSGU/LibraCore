@@ -23,6 +23,7 @@ public class SachDAO {
     private static final String COL_TEN = "TenSach";
     private static final String COL_MO_TA = "MoTa";
     private static final String COL_SO_TRANG = "SoTrang";
+    private static final String COL_GIA_NHAP = "GiaNhap";
     private static final String COL_HOAT_DONG = "HoatDong";
 
     private static final String TABLE_SACH_TACGIA = "Sach_TacGia";
@@ -33,7 +34,7 @@ public class SachDAO {
 
     public List<Sach> getActive() {
         String sql =
-                "SELECT id_Sach, id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, HoatDong " +
+                "SELECT id_Sach, id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, GiaNhap, HoatDong " +
                 "FROM Sach " +
                 "WHERE HoatDong = ? " +
                 "ORDER BY TenSach ASC";
@@ -55,7 +56,7 @@ public class SachDAO {
 
     public List<Sach> getAll() {
         String sql =
-                "SELECT id_Sach, id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, HoatDong " +
+                "SELECT id_Sach, id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, GiaNhap, HoatDong " +
                 "FROM Sach " +
                 "ORDER BY TenSach ASC";
 
@@ -73,7 +74,7 @@ public class SachDAO {
 
     public Sach getById(int idSach) {
         String sql =
-                "SELECT id_Sach, id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, HoatDong " +
+                "SELECT id_Sach, id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, GiaNhap, HoatDong " +
                 "FROM Sach " +
                 "WHERE id_Sach = ?";
 
@@ -92,8 +93,8 @@ public class SachDAO {
 
     public boolean insert(Sach s) {
         String sql =
-                "INSERT INTO Sach (id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, HoatDong) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+                "INSERT INTO Sach (id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, GiaNhap, HoatDong) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -122,7 +123,8 @@ public class SachDAO {
                 "NamXuatBan = ?, " +
                 "TenSach = ?, " +
                 "MoTa = ?, " +
-                "SoTrang = ? " +
+                "SoTrang = ?, " +
+                "GiaNhap = ? " +
                 "WHERE id_Sach = ?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -152,7 +154,7 @@ public class SachDAO {
 
     public List<Sach> searchActive(String keyword) {
         String sql =
-                "SELECT id_Sach, id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, HoatDong " +
+                "SELECT id_Sach, id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, GiaNhap, HoatDong " +
                 "FROM Sach " +
                 "WHERE HoatDong = ? AND (TenSach LIKE ? OR MoTa LIKE ?) " +
                 "ORDER BY TenSach ASC";
@@ -178,7 +180,7 @@ public class SachDAO {
 
     public List<Sach> searchAll(String keyword) {
         String sql =
-                "SELECT id_Sach, id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, HoatDong " +
+                "SELECT id_Sach, id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, GiaNhap, HoatDong " +
                 "FROM Sach " +
                 "WHERE TenSach LIKE ? OR MoTa LIKE ? " +
                 "ORDER BY TenSach ASC";
@@ -200,7 +202,7 @@ public class SachDAO {
 
     public List<Sach> searchAllByTacGia(String keyword) {
         String sql =
-                "SELECT DISTINCT s.id_Sach, s.id_NXB, s.NamXuatBan, s.TenSach, s.MoTa, s.SoTrang, s.HoatDong " +
+                "SELECT DISTINCT s.id_Sach, s.id_NXB, s.NamXuatBan, s.TenSach, s.MoTa, s.SoTrang, s.GiaNhap, s.HoatDong " +
                 "FROM Sach s " +
                 "JOIN Sach_TacGia st ON s.id_Sach = st.id_Sach " +
                 "JOIN TacGia tg ON st.id_TacGia = tg.id_TacGia " +
@@ -223,7 +225,7 @@ public class SachDAO {
     
     public List<Sach> searchByTacGia(String keyword) {
         String sql = 
-                "SELECT DISTINCT s.id_Sach, s.id_NXB, s.NamXuatBan, s.TenSach, s.MoTa, s.SoTrang, s.HoatDong " +
+                "SELECT DISTINCT s.id_Sach, s.id_NXB, s.NamXuatBan, s.TenSach, s.MoTa, s.SoTrang, s.GiaNhap, s.HoatDong " +
                 "FROM Sach s " +
                 "JOIN Sach_TacGia st ON s.id_Sach = st.id_Sach " +
                 "JOIN TacGia tg ON st.id_TacGia = tg.id_TacGia " +
@@ -282,8 +284,8 @@ public class SachDAO {
 
     public boolean insertWithRelations(Sach s, List<Integer> tacGiaIds, List<Integer> theLoaiIds) {
         String sqlInsertSach =
-                "INSERT INTO Sach (id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, HoatDong) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+                "INSERT INTO Sach (id_NXB, NamXuatBan, TenSach, MoTa, SoTrang, GiaNhap, HoatDong) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         List<Integer> tgIds = tacGiaIds == null ? Collections.emptyList() : tacGiaIds;
         List<Integer> tlIds = theLoaiIds == null ? Collections.emptyList() : theLoaiIds;
@@ -336,7 +338,8 @@ public class SachDAO {
                 "NamXuatBan = ?, " +
                 "TenSach = ?, " +
                 "MoTa = ?, " +
-                "SoTrang = ? " +
+                "SoTrang = ?, " +
+                "GiaNhap = ? " +
                 "WHERE id_Sach = ?";
 
         List<Integer> tgIds = tacGiaIds == null ? Collections.emptyList() : tacGiaIds;
@@ -390,10 +393,11 @@ public class SachDAO {
         if (s.getSoTrang() == null) ps.setNull(5, Types.INTEGER);
         else ps.setInt(5, s.getSoTrang());
 
-        ps.setBoolean(6, s.isHoatDong());
+        ps.setBigDecimal(6, s.getGiaNhap());
+        ps.setBoolean(7, s.isHoatDong());
 
         if (includeIdAtEnd) {
-            ps.setInt(7, s.getIdSach());
+            ps.setInt(8, s.getIdSach());
         }
     }
 
@@ -409,7 +413,8 @@ public class SachDAO {
 
         if (s.getSoTrang() == null) ps.setNull(5, Types.INTEGER);
         else ps.setInt(5, s.getSoTrang());
-        ps.setInt(6, s.getIdSach());
+        ps.setBigDecimal(6, s.getGiaNhap());
+        ps.setInt(7, s.getIdSach());
     }
 
     private Sach map(ResultSet rs) throws SQLException {
@@ -428,6 +433,7 @@ public class SachDAO {
         int soTrang = rs.getInt(COL_SO_TRANG);
         s.setSoTrang(rs.wasNull() ? null : soTrang);
 
+        s.setGiaNhap(rs.getBigDecimal(COL_GIA_NHAP));
         s.setHoatDong(rs.getBoolean(COL_HOAT_DONG));
         return s;
     }

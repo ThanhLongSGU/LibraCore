@@ -67,6 +67,7 @@ public class PhieuNhapDAO {
                 "INSERT INTO PhieuNhap (id_NCC, NgayNhap, SoLuongSach, id_NhanVien, TrangThai) VALUES (?, ?, ?, ?, ?)";
         String sqlInsertDetail =
                 "INSERT INTO ChiTietPhieuNhap (id_PhieuNhap, id_Sach, SoLuong, GiaTien) VALUES (?, ?, ?, ?)";
+        String sqlUpdateBookPrice = "UPDATE Sach SET GiaNhap = ? WHERE id_Sach = ?";
         String sqlInsertCuonSach =
                 "INSERT INTO CuonSach (id_Sach, MaCuonSach, TinhTrangSach, TrangThaiMuon, DaHuy, id_ChiTietPhieuNhap) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -114,7 +115,8 @@ public class PhieuNhapDAO {
                 }
 
                 try (PreparedStatement psDetail = conn.prepareStatement(sqlInsertDetail, Statement.RETURN_GENERATED_KEYS);
-                     PreparedStatement psCuonSach = conn.prepareStatement(sqlInsertCuonSach)) {
+                     PreparedStatement psCuonSach = conn.prepareStatement(sqlInsertCuonSach);
+                     PreparedStatement psBookPrice = conn.prepareStatement(sqlUpdateBookPrice)) {
                     Map<Integer, Integer> nextSeqBySach = new HashMap<Integer, Integer>();
 
                     for (ChiTietPhieuNhap ct : chiTietList) {
@@ -133,6 +135,13 @@ public class PhieuNhapDAO {
                             psDetail.setBigDecimal(4, ct.getGiaTien());
                         }
                         if (psDetail.executeUpdate() == 0) {
+                            conn.rollback();
+                            return false;
+                        }
+
+                        psBookPrice.setBigDecimal(1, ct.getGiaTien());
+                        psBookPrice.setInt(2, ct.getIdSach());
+                        if (psBookPrice.executeUpdate() != 1) {
                             conn.rollback();
                             return false;
                         }

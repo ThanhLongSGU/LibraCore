@@ -130,7 +130,7 @@ public class TaoPhieuNhapDialog extends JDialog {
         btnThemSach = new JButton("Thêm vào phiếu");
         btnThemSach.addActionListener(e -> addSelectedSachToTable());
 
-        String[] cols = { "STT", "Tên sách", "Số lượng", "Đơn giá nhập", "Thành tiền", "Hành động" };
+        String[] cols = { "STT", "Tên sách", "Số lượng nhập", "Đơn giá nhập", "Thành tiền", "Hành động" };
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -202,7 +202,7 @@ public class TaoPhieuNhapDialog extends JDialog {
                     return;
                 }
                 int col = e.getColumn();
-                if (col == 3 || col == 4 || col == TableModelEvent.ALL_COLUMNS
+                if (col == 2 || col == 3 || col == 4 || col == TableModelEvent.ALL_COLUMNS
                         || e.getType() == TableModelEvent.DELETE) {
                     updateTongs();
                 }
@@ -265,8 +265,8 @@ public class TaoPhieuNhapDialog extends JDialog {
         Object[] rowData = {
                 stt,
                 s,
-                1,
-                BigDecimal.ZERO,
+                "",
+                s.getGiaNhap() == null ? BigDecimal.ZERO : s.getGiaNhap(),
                 BigDecimal.ZERO,
                 "Xóa"
         };
@@ -274,6 +274,11 @@ public class TaoPhieuNhapDialog extends JDialog {
 
         clearSearchBar();
         updateTongs();
+        int row = tableModel.getRowCount() - 1;
+        tblChiTiet.setRowSelectionInterval(row, row);
+        if (tblChiTiet.editCellAt(row, 2)) {
+            tblChiTiet.getEditorComponent().requestFocusInWindow();
+        }
     }
 
     private void updateTongs() {
