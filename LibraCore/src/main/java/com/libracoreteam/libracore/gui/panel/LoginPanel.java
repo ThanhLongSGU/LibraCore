@@ -2,6 +2,7 @@ package com.libracoreteam.libracore.gui.panel;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.libracoreteam.libracore.bus.TaiKhoanBUS;
+import com.libracoreteam.libracore.bus.TaiKhoanBUS.LoginStatus;
 import com.libracoreteam.libracore.gui.LoginFrame;
 
 import javax.swing.*;
@@ -107,25 +108,42 @@ public class LoginPanel extends JPanel {
             }
 
             TaiKhoanBUS bus = new TaiKhoanBUS();
-            String loginResult = bus.checkLogin(user, passChars);
+            LoginStatus loginResult = bus.checkLogin(user, passChars);
 
             switch (loginResult) {
-                case "SUCCESS":
+                case SUCCESS:
                     parentFrame.onLoginSuccess();
                     break;
-                case "WRONG_PASS":
+                case INVALID_CREDENTIALS:
                     JOptionPane.showMessageDialog(this,
                             "Sai tài khoản hoặc mật khẩu!", "Lỗi đăng nhập", JOptionPane.ERROR_MESSAGE);
-                    txtPass.setText(""); 
+                    txtPass.setText("");
                     txtPass.requestFocus();
                     break;
-                case "LOCKED":
+                case ACCOUNT_LOCKED:
                     JOptionPane.showMessageDialog(this,
                             "Tài khoản của bạn đã bị khóa!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
                     break;
-                case "ERROR":
-                    JOptionPane.showMessageDialog(this,
-                            "Lỗi hệ thống hoặc mất kết nối DB!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                case EMPLOYEE_INACTIVE:
+                    showLoginError("Hồ sơ nhân viên của tài khoản đã bị ngừng hoạt động.");
+                    break;
+                case PROFILE_INCOMPLETE:
+                    showLoginError("Tài khoản chưa được liên kết đầy đủ với hồ sơ nhân viên hoặc vai trò.");
+                    break;
+                case DATABASE_CONFIGURATION_ERROR:
+                    showLoginError("Thiếu hoặc không đọc được cấu hình cơ sở dữ liệu. Kiểm tra config.properties.");
+                    break;
+                case DATABASE_UNAVAILABLE:
+                    showLoginError("Không thể kết nối cơ sở dữ liệu. Kiểm tra MySQL và địa chỉ máy chủ.");
+                    break;
+                case DATABASE_AUTHENTICATION_ERROR:
+                    showLoginError("Cơ sở dữ liệu từ chối thông tin xác thực. Kiểm tra tài khoản kết nối DB.");
+                    break;
+                case DATABASE_QUERY_ERROR:
+                    showLoginError("Đã kết nối DB nhưng truy vấn đăng nhập bị lỗi. Kiểm tra schema và quyền truy cập.");
+                    break;
+                case INTERNAL_ERROR:
+                    showLoginError("Có lỗi nội bộ khi xử lý đăng nhập. Chi tiết đã được ghi vào log ứng dụng.");
                     break;
             }
         });
@@ -152,6 +170,10 @@ public class LoginPanel extends JPanel {
         panel.setOpaque(false);
         panel.setBorder(new EmptyBorder(35, 40, 35, 40));
         return panel;
+    }
+
+    private void showLoginError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Lỗi đăng nhập", JOptionPane.ERROR_MESSAGE);
     }
 
     private void styleTextField(JTextField txt) {

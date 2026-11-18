@@ -8,11 +8,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TaiKhoanDAO {
+
+    public record LoginInfo(
+        int idTaiKhoan,
+        String matKhau,
+        boolean taiKhoanHoatDong,
+        Integer idNhanVien,
+        String tenNhanVien,
+        Boolean nhanVienHoatDong,
+        String tenVaiTro
+    ) {}
 
     private List<TaiKhoan> queryList(String sql, Object[] params) {
         List<TaiKhoan> list = new ArrayList<>();
@@ -115,12 +123,12 @@ public class TaiKhoanDAO {
         }
     }
 
-    public Map<String, Object> getLoginInfo(String username) {
-        Map<String, Object> result = null;
-        String sql = "SELECT tk.id_TaiKhoan, tk.MatKhau, nv.TenNhanVien, nv.HoatDong, vt.TenVaiTro " +
+    public LoginInfo getLoginInfo(String username) throws SQLException {
+        String sql = "SELECT tk.id_TaiKhoan, tk.MatKhau, tk.HoatDong AS taiKhoanHoatDong, " +
+                     "nv.id_NhanVien, nv.TenNhanVien, nv.HoatDong AS nhanVienHoatDong, vt.TenVaiTro " +
                      "FROM TaiKhoan tk " +
-                     "JOIN NhanVien nv ON tk.id_TaiKhoan = nv.id_TaiKhoan " +
-                     "JOIN VaiTro vt ON tk.id_VaiTro = vt.id_VaiTro " +
+                     "LEFT JOIN NhanVien nv ON tk.id_TaiKhoan = nv.id_TaiKhoan " +
+                     "LEFT JOIN VaiTro vt ON tk.id_VaiTro = vt.id_VaiTro " +
                      "WHERE tk.TaiKhoan = ?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -128,17 +136,22 @@ public class TaiKhoanDAO {
             pst.setString(1, username);
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
-                    result = new HashMap<>();
-                    result.put("idTaiKhoan", rs.getInt("id_TaiKhoan"));
-                    result.put("matKhau", rs.getString("MatKhau")); 
-                    result.put("tenNhanVien", rs.getString("TenNhanVien"));
-                    result.put("hoatDong", rs.getBoolean("HoatDong"));
-                    result.put("tenVaiTro", rs.getString("TenVaiTro"));
+                    int idNhanVienValue = rs.getInt("id_NhanVien");
+                    Integer idNhanVien = rs.wasNull() ? null : idNhanVienValue;
+                    boolean nhanVienHoatDongValue = rs.getBoolean("nhanVienHoatDong");
+                    Boolean nhanVienHoatDong = rs.wasNull() ? null : nhanVienHoatDongValue;
+                    return new LoginInfo(
+                        rs.getInt("id_TaiKhoan"),
+                        rs.getString("MatKhau"),
+                        rs.getBoolean("taiKhoanHoatDong"),
+                        idNhanVien,
+                        rs.getString("TenNhanVien"),
+                        nhanVienHoatDong,
+                        rs.getString("TenVaiTro")
+                    );
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("TaiKhoanDAO.getLoginInfo failed", e);
         }
-        return result;
+        return null;
     }
 }
