@@ -114,20 +114,38 @@ public class TacGiaDAO {
 
     public boolean softDelete(int id) {
         String sql =
-                "UPDATE " + TABLE +
-                " SET " + COL_HOAT_DONG + " = ?" +
-                " WHERE " + COL_ID + " = ?";
+                "UPDATE " + TABLE + " SET " + COL_HOAT_DONG + " = 0 " +
+                "WHERE " + COL_ID + " = ? AND " + COL_HOAT_DONG + " = 1 " +
+                "AND NOT EXISTS (SELECT 1 FROM sach_tacgia WHERE id_TacGia = ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setBoolean(1, false);
+            ps.setInt(1, id);
             ps.setInt(2, id);
-
-            return ps.executeUpdate() > 0;
+            if (ps.executeUpdate() > 0) {
+                return true;
+            }
+            if (hasBooks(id)) {
+                throw new IllegalStateException("Không thể xóa tác giả vì đã có sách của tác giả này.");
+            }
+            return false;
 
         } catch (SQLException e) {
             throw new RuntimeException("TacGiaDAO.softDelete failed", e);
+        }
+    }
+
+    public boolean hasBooks(int id) {
+        String sql = "SELECT 1 FROM sach_tacgia WHERE id_TacGia = ? LIMIT 1";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("TacGiaDAO.hasBooks failed", e);
         }
     }
 

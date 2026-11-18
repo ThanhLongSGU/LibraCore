@@ -29,8 +29,20 @@ public class TheLoaiBUS {
     }
 
     public boolean softDelete(int id) {
-        if (id <= 0) return false;
+        if (id <= 0) {
+            throw new IllegalArgumentException("Mã thể loại không hợp lệ.");
+        }
+        if (dao.hasBooks(id)) {
+            throw new IllegalStateException("Không thể xóa thể loại vì đã có sách thuộc thể loại này.");
+        }
         return dao.softDelete(id);
+    }
+
+    public boolean hasBooks(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("Mã thể loại không hợp lệ.");
+        }
+        return dao.hasBooks(id);
     }
 
     public List<TheLoai> search(String keyword) {

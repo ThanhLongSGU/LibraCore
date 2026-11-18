@@ -19,7 +19,6 @@ public class NCCPanel extends javax.swing.JPanel {
         initComponents();
         InnitButton();
         initTable();
-        addTableListener();
         loadDataToTable();
         bindEvents();
     }
@@ -32,6 +31,8 @@ public class NCCPanel extends javax.swing.JPanel {
             jButtonLamMoi.setIcon(FontIcon.of(FontAwesomeSolid.SYNC_ALT, iconSize, new Color(100, 100, 100)));
             jButtonXoa.setIcon(FontIcon.of(FontAwesomeSolid.TRASH, iconSize, new Color(220, 53, 69)));
             jButtonSua.setIcon(FontIcon.of(FontAwesomeSolid.EDIT, iconSize, new Color(13, 110, 253)));
+            jButtonXoa.setEnabled(false);
+            jButtonXoa.setToolTipText("Chọn một nhà cung cấp để kiểm tra điều kiện xóa.");
         }
         private void initTable() {
         tblModel = new javax.swing.table.DefaultTableModel(new Object[]{"Mã NCC", "Tên nhà cung cấp"}, 0) {
@@ -55,8 +56,12 @@ public class NCCPanel extends javax.swing.JPanel {
                     currentSelected = currentList.get(selectedRow);                  
                     jTextFieldMaNCC.setText(String.valueOf(currentSelected.getIdNCC()));
                     jTextTenNCC.setText(currentSelected.getTenNCC());
+                    updateDeleteButtonState();
                 } else {
                     currentSelected = null;
+                    jTextFieldMaNCC.setText("");
+                    jTextTenNCC.setText("");
+                    updateDeleteButtonState();
                 }
             }
         });
@@ -121,19 +126,26 @@ public class NCCPanel extends javax.swing.JPanel {
         }
     }
 
-        private void addTableListener() {
-        jTableSach1.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                int selectedRow = jTableSach1.getSelectedRow();
-                if (selectedRow >= 0 && selectedRow < currentList.size()) {
-                    currentSelected = currentList.get(selectedRow);
-                    jTextFieldMaNCC.setText(String.valueOf(currentSelected.getIdNCC()));
-                    jTextTenNCC.setText(currentSelected.getTenNCC());
-                } else {
-                    currentSelected = null;
-                }
-            }
-        });
+    private void updateDeleteButtonState() {
+        if (currentSelected == null) {
+            jButtonXoa.setEnabled(false);
+            jButtonXoa.setToolTipText("Chọn một nhà cung cấp để kiểm tra điều kiện xóa.");
+            return;
+        }
+
+        try {
+            boolean hasBooks = nccBUS.hasBooks(currentSelected.getIdNCC());
+            jButtonXoa.setEnabled(!hasBooks);
+            jButtonXoa.setToolTipText(hasBooks
+                    ? "Không thể xóa vì nhà cung cấp đã có sách trong lịch sử nhập."
+                    : null);
+        } catch (RuntimeException ex) {
+            jButtonXoa.setEnabled(false);
+            jButtonXoa.setToolTipText("Không kiểm tra được lịch sử nhập; thao tác xóa đã bị vô hiệu.");
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Không thể kiểm tra sách đã nhập từ nhà cung cấp: " + ex.getMessage(),
+                    "Lỗi kiểm tra", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }
 
   
@@ -383,6 +395,9 @@ public class NCCPanel extends javax.swing.JPanel {
                 } else {
                     javax.swing.JOptionPane.showMessageDialog(this, "Xóa thất bại. Vui lòng thử lại!", "Lỗi", javax.swing.JOptionPane.ERROR_MESSAGE);
                 }
+            } catch (IllegalStateException ex) {
+                updateDeleteButtonState();
+                javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage(), "Không thể xóa", javax.swing.JOptionPane.WARNING_MESSAGE);
             } catch (Exception ex) {
                 javax.swing.JOptionPane.showMessageDialog(this, "Lỗi hệ thống: " + ex.getMessage(), "Lỗi", javax.swing.JOptionPane.ERROR_MESSAGE);
             }

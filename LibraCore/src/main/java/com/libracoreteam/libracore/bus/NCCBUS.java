@@ -62,7 +62,17 @@ public boolean update(com.libracoreteam.libracore.model.NCC ncc) {
         if (id <= 0) {
             throw new IllegalArgumentException("Mã nhà cung cấp không hợp lệ!");
         }
+        if (nccDAO.hasBooks(id)) {
+            throw new IllegalStateException("Không thể xóa nhà cung cấp vì đã có sách trong lịch sử nhập.");
+        }
         return nccDAO.softDelete(id);
+    }
+
+    public boolean hasBooks(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("Mã nhà cung cấp không hợp lệ!");
+        }
+        return nccDAO.hasBooks(id);
     }
 
 

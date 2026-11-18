@@ -41,7 +41,17 @@ public class TacGiaBUS {
         if (id <= 0) {
             throw new IllegalArgumentException("Mã tác giả không hợp lệ!");
         }
+        if (dao.hasBooks(id)) {
+            throw new IllegalStateException("Không thể xóa tác giả vì đã có sách của tác giả này.");
+        }
         return dao.softDelete(id);
+    }
+
+    public boolean hasBooks(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("Mã tác giả không hợp lệ!");
+        }
+        return dao.hasBooks(id);
     }
 
     public List<TacGia> search(String keyword) {

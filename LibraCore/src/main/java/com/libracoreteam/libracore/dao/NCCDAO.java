@@ -90,17 +90,43 @@ public class NCCDAO {
     }
 
     public boolean softDelete(int id) {
-        String sql = "UPDATE " + TABLE + " SET " + COL_HOAT_DONG + " = 0 WHERE " + COL_ID + " = ?";
+        String sql = "UPDATE " + TABLE + " SET " + COL_HOAT_DONG + " = 0 " +
+                "WHERE " + COL_ID + " = ? AND " + COL_HOAT_DONG + " = 1 " +
+                "AND NOT EXISTS (" +
+                "SELECT 1 FROM phieunhap pn " +
+                "JOIN chitietphieunhap ctpn ON ctpn.id_PhieuNhap = pn.id_PhieuNhap " +
+                "WHERE pn.id_NCC = ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
+            ps.setInt(2, id);
+            if (ps.executeUpdate() > 0) {
+                return true;
+            }
+            if (hasBooks(id)) {
+                throw new IllegalStateException("Không thể xóa nhà cung cấp vì đã có sách trong lịch sử nhập.");
+            }
+            return false;
 
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new RuntimeException("NCCDAO.softDelete failed", e);
+        }
+    }
+
+    public boolean hasBooks(int id) {
+        String sql = "SELECT 1 FROM phieunhap pn " +
+                "JOIN chitietphieunhap ctpn ON ctpn.id_PhieuNhap = pn.id_PhieuNhap " +
+                "WHERE pn.id_NCC = ? LIMIT 1";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("NCCDAO.hasBooks failed", e);
         }
     }
 
