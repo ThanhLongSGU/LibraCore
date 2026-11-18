@@ -1,6 +1,7 @@
 
 package com.libracoreteam.libracore.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -11,6 +12,7 @@ public class Sach {
     private String tenSach;
     private String moTa;
     private Integer soTrang;
+    private BigDecimal giaNhap = BigDecimal.ZERO;
     private boolean hoatDong;
 
     private List<TacGia> danhSachTacGia;
@@ -64,6 +66,10 @@ public class Sach {
         return soTrang;
     }
 
+    public BigDecimal getGiaNhap() {
+        return giaNhap;
+    }
+
     public List<TacGia> getDanhSachTacGia() {
         return danhSachTacGia;
     }
@@ -98,6 +104,10 @@ public class Sach {
 
     public void setSoTrang(Integer soTrang) {
         this.soTrang = soTrang;
+    }
+
+    public void setGiaNhap(BigDecimal giaNhap) {
+        this.giaNhap = giaNhap;
     }
     public void setDanhSachTacGia(List<TacGia> danhSachTacGia) {
         this.danhSachTacGia = danhSachTacGia;

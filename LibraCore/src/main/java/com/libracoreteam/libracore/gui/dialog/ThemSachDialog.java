@@ -25,6 +25,7 @@ public class ThemSachDialog extends JDialog {
     private JTextField txtTenSach;
     private JTextField txtNamXB;
     private JTextField txtSoTrang;
+    private JTextField txtGiaNhap;
 
     private JTextArea txtMoTa;
 
@@ -94,6 +95,10 @@ public class ThemSachDialog extends JDialog {
         formPanel.add(new JLabel("Số trang:"));
         formPanel.add(txtSoTrang);
 
+        txtGiaNhap = new JTextField("0", 10);
+        formPanel.add(new JLabel("Giá nhập mặc định:"));
+        formPanel.add(txtGiaNhap);
+
         txtMoTa = new JTextArea(4, 25);
         txtMoTa.setLineWrap(true);
         txtMoTa.setWrapStyleWord(true);
@@ -140,6 +145,7 @@ public class ThemSachDialog extends JDialog {
                     idNXB,
                     txtNamXB.getText(),
                     txtSoTrang.getText(),
+                    txtGiaNhap.getText(),
                     txtMoTa.getText(),
                     tacGiaIds,
                     theLoaiIds);
