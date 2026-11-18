@@ -302,6 +302,8 @@ public class NXBPanel extends javax.swing.JPanel {
 
             jButtonSua.setIcon(FontIcon.of(FontAwesomeSolid.EDIT, iconSize, new Color(13, 110, 253)));
             jButtonXoa.setIcon(FontIcon.of(FontAwesomeSolid.TRASH, iconSize, new Color(220, 53, 69)));
+            jButtonXoa.setEnabled(false);
+            jButtonXoa.setToolTipText("Chọn một nhà xuất bản để kiểm tra điều kiện xóa.");
 
     }
 
@@ -330,10 +332,16 @@ public class NXBPanel extends javax.swing.JPanel {
             if (e.getValueIsAdjusting()) return;
             if (isLoadingSelection) return;
             int row = jTableSach.getSelectedRow();
-            if (row < 0 || row >= currentList.size()) return;
+            if (row < 0 || row >= currentList.size()) {
+                currentSelected = null;
+                clearDetail();
+                updateDeleteButtonState();
+                return;
+            }
 
             currentSelected = currentList.get(row);
             fillDetail(currentSelected);
+            updateDeleteButtonState();
             setEditMode(false);
         });
 
@@ -385,6 +393,28 @@ public class NXBPanel extends javax.swing.JPanel {
         jTextFieldTenNXB.setText("");
         jTextFieldDiaChiNXB.setText("");
         jTextFieldSDT.setText("");
+    }
+
+    private void updateDeleteButtonState() {
+        if (currentSelected == null) {
+            jButtonXoa.setEnabled(false);
+            jButtonXoa.setToolTipText("Chọn một nhà xuất bản để kiểm tra điều kiện xóa.");
+            return;
+        }
+
+        try {
+            boolean hasBooks = nxbBUS.hasBooks(currentSelected.getIdNXB());
+            jButtonXoa.setEnabled(!hasBooks);
+            jButtonXoa.setToolTipText(hasBooks
+                    ? "Không thể xóa vì đã có sách thuộc nhà xuất bản này."
+                    : null);
+        } catch (RuntimeException ex) {
+            jButtonXoa.setEnabled(false);
+            jButtonXoa.setToolTipText("Không kiểm tra được sách liên kết; thao tác xóa đã bị vô hiệu.");
+            JOptionPane.showMessageDialog(this,
+                    "Không thể kiểm tra sách thuộc nhà xuất bản: " + ex.getMessage(),
+                    "Lỗi kiểm tra", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void setEditMode(boolean on) {
@@ -450,6 +480,9 @@ public class NXBPanel extends javax.swing.JPanel {
             clearDetail();
             currentSelected = null;
             setEditMode(false);
+        } catch (IllegalStateException ex) {
+            updateDeleteButtonState();
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Không thể xóa", JOptionPane.WARNING_MESSAGE);
         } catch (RuntimeException ex) {
             JOptionPane.showMessageDialog(this, "Lỗi hệ thống: " + ex.getMessage());
         }

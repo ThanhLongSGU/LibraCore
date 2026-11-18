@@ -52,6 +52,8 @@ public class TacGiaPanel extends javax.swing.JPanel {
     public void loadData() {
         try {
             currentList = bus.getAll();
+            currentSelected = null;
+            jTableSach.clearSelection();
             tblModel.setRowCount(0);
             for (TacGia tg : currentList) {
                 tblModel.addRow(new Object[]{
@@ -98,6 +100,7 @@ public class TacGiaPanel extends javax.swing.JPanel {
             jTextFieldNoiSinhTacGia.setText("");
             jTextFieldSDTTacGia.setText("");
             currentSelected = null;
+            updateDeleteButtonState();
             
         } catch (Exception ex) {
             System.out.println("Lỗi tìm kiếm: " + ex.getMessage());
@@ -106,13 +109,24 @@ public class TacGiaPanel extends javax.swing.JPanel {
 
     private void bindEvents() {
         jTableSach.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && jTableSach.getSelectedRow() != -1) {
-                currentSelected = currentList.get(jTableSach.getSelectedRow());
-                jTextFieldMaTacGia.setText(String.valueOf(currentSelected.getIdTacGia()));
-                jTextFieldTenTacGia.setText(currentSelected.getTenTacGia());
-                jTextFieldNgaySinhTacGia.setText(currentSelected.getNgaySinh() != null ? currentSelected.getNgaySinh().toString() : "");
-                jTextFieldNoiSinhTacGia.setText(currentSelected.getNoiSinh() != null ? currentSelected.getNoiSinh() : "");
-                jTextFieldSDTTacGia.setText(currentSelected.getSdt() != null ? currentSelected.getSdt() : "");
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = jTableSach.getSelectedRow();
+                if (selectedRow != -1) {
+                    currentSelected = currentList.get(selectedRow);
+                    jTextFieldMaTacGia.setText(String.valueOf(currentSelected.getIdTacGia()));
+                    jTextFieldTenTacGia.setText(currentSelected.getTenTacGia());
+                    jTextFieldNgaySinhTacGia.setText(currentSelected.getNgaySinh() != null ? currentSelected.getNgaySinh().toString() : "");
+                    jTextFieldNoiSinhTacGia.setText(currentSelected.getNoiSinh() != null ? currentSelected.getNoiSinh() : "");
+                    jTextFieldSDTTacGia.setText(currentSelected.getSdt() != null ? currentSelected.getSdt() : "");
+                } else {
+                    currentSelected = null;
+                    jTextFieldMaTacGia.setText("");
+                    jTextFieldTenTacGia.setText("");
+                    jTextFieldNgaySinhTacGia.setText("");
+                    jTextFieldNoiSinhTacGia.setText("");
+                    jTextFieldSDTTacGia.setText("");
+                }
+                updateDeleteButtonState();
             }
         });
 
@@ -338,6 +352,30 @@ public class TacGiaPanel extends javax.swing.JPanel {
             jButtonLamMoi.setIcon(FontIcon.of(FontAwesomeSolid.SYNC_ALT, iconSize, new Color(100, 100, 100)));
             jButtonSua.setIcon(FontIcon.of(FontAwesomeSolid.EDIT, iconSize, new Color(13, 110, 253))); 
             jButtonXoa.setIcon(FontIcon.of(FontAwesomeSolid.TRASH, iconSize, new Color(220, 53, 69)));
+            jButtonXoa.setEnabled(false);
+            jButtonXoa.setToolTipText("Chọn một tác giả để kiểm tra điều kiện xóa.");
+    }
+
+    private void updateDeleteButtonState() {
+        if (currentSelected == null) {
+            jButtonXoa.setEnabled(false);
+            jButtonXoa.setToolTipText("Chọn một tác giả để kiểm tra điều kiện xóa.");
+            return;
+        }
+
+        try {
+            boolean hasBooks = bus.hasBooks(currentSelected.getIdTacGia());
+            jButtonXoa.setEnabled(!hasBooks);
+            jButtonXoa.setToolTipText(hasBooks
+                    ? "Không thể xóa vì tác giả đã có sách."
+                    : null);
+        } catch (RuntimeException ex) {
+            jButtonXoa.setEnabled(false);
+            jButtonXoa.setToolTipText("Không kiểm tra được sách liên kết; thao tác xóa đã bị vô hiệu.");
+            JOptionPane.showMessageDialog(this,
+                    "Không thể kiểm tra sách của tác giả: " + ex.getMessage(),
+                    "Lỗi kiểm tra", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     private void jButtonThemActionPerformed(java.awt.event.ActionEvent evt) {
@@ -393,6 +431,9 @@ public class TacGiaPanel extends javax.swing.JPanel {
                 jTextFieldSDTTacGia.setText("");
                 currentSelected = null;
                 
+            } catch (IllegalStateException ex) {
+                updateDeleteButtonState();
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Không thể xóa", JOptionPane.WARNING_MESSAGE);
             } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(this, "Lỗi hệ thống: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }

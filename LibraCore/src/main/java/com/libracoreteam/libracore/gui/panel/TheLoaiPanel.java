@@ -53,6 +53,8 @@ public class TheLoaiPanel extends javax.swing.JPanel {
     public void loadData() {
         try {
             currentList = bus.getAll();
+            currentSelected = null;
+            jTableSach.clearSelection();
             tblModel.setRowCount(0);
             for (TheLoai tl : currentList) {
                 tblModel.addRow(new Object[]{
@@ -68,10 +70,18 @@ public class TheLoaiPanel extends javax.swing.JPanel {
 
     private void bindEvents() {
         jTableSach.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && jTableSach.getSelectedRow() != -1) {
-                currentSelected = currentList.get(jTableSach.getSelectedRow());
-                jTextFieldMaTheLoai.setText(String.valueOf(currentSelected.getIdTheLoai()));
-                jTextFieldTenTheLoai.setText(currentSelected.getTenTheLoai());
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = jTableSach.getSelectedRow();
+                if (selectedRow != -1) {
+                    currentSelected = currentList.get(selectedRow);
+                    jTextFieldMaTheLoai.setText(String.valueOf(currentSelected.getIdTheLoai()));
+                    jTextFieldTenTheLoai.setText(currentSelected.getTenTheLoai());
+                } else {
+                    currentSelected = null;
+                    jTextFieldMaTheLoai.setText("");
+                    jTextFieldTenTheLoai.setText("");
+                }
+                updateDeleteButtonState();
             }
         });
         jTextFieldTimKiem.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -269,6 +279,30 @@ public class TheLoaiPanel extends javax.swing.JPanel {
             jButtonLamMoi.setIcon(FontIcon.of(FontAwesomeSolid.SYNC_ALT, iconSize, new Color(100, 100, 100)));
             jButtonSua.setIcon(FontIcon.of(FontAwesomeSolid.EDIT, iconSize, new Color(13, 110, 253))); 
             jButtonXoa.setIcon(FontIcon.of(FontAwesomeSolid.TRASH, iconSize, new Color(220, 53, 69))); 
+            jButtonXoa.setEnabled(false);
+            jButtonXoa.setToolTipText("Chọn một thể loại để kiểm tra điều kiện xóa.");
+    }
+
+    private void updateDeleteButtonState() {
+        if (currentSelected == null) {
+            jButtonXoa.setEnabled(false);
+            jButtonXoa.setToolTipText("Chọn một thể loại để kiểm tra điều kiện xóa.");
+            return;
+        }
+
+        try {
+            boolean hasBooks = bus.hasBooks(currentSelected.getIdTheLoai());
+            jButtonXoa.setEnabled(!hasBooks);
+            jButtonXoa.setToolTipText(hasBooks
+                    ? "Không thể xóa vì đã có sách thuộc thể loại này."
+                    : null);
+        } catch (RuntimeException ex) {
+            jButtonXoa.setEnabled(false);
+            jButtonXoa.setToolTipText("Không kiểm tra được sách liên kết; thao tác xóa đã bị vô hiệu.");
+            JOptionPane.showMessageDialog(this,
+                    "Không thể kiểm tra sách thuộc thể loại: " + ex.getMessage(),
+                    "Lỗi kiểm tra", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     private void jButtonThemActionPerformed(java.awt.event.ActionEvent evt) {
@@ -320,6 +354,9 @@ public class TheLoaiPanel extends javax.swing.JPanel {
                 jTextFieldTenTheLoai.setText("");
                 currentSelected = null;
                 
+            } catch (IllegalStateException ex) {
+                updateDeleteButtonState();
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Không thể xóa", JOptionPane.WARNING_MESSAGE);
             } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(this, "Lỗi hệ thống: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }

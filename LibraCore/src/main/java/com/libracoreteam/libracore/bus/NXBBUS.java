@@ -83,7 +83,17 @@ public class NXBBUS {
         if (id <= 0) {
             throw new IllegalArgumentException("ID NXB không hợp lệ");
         }
+        if (nxbDAO.hasBooks(id)) {
+            throw new IllegalStateException("Không thể xóa nhà xuất bản vì đã có sách thuộc nhà xuất bản này.");
+        }
         return nxbDAO.softDelete(id);
+    }
+
+    public boolean hasBooks(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID NXB không hợp lệ");
+        }
+        return nxbDAO.hasBooks(id);
     }
     
     private void validateForCreateOrUpdate(int id, String tenNXB, String diaChi, String sdt) {

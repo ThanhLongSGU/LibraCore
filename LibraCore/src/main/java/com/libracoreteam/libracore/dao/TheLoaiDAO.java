@@ -59,14 +59,35 @@ public class TheLoaiDAO {
     }
 
     public boolean softDelete(int id) {
-        String sql = "UPDATE TheLoai SET HoatDong = 0 WHERE id_TheLoai = ?";
+        String sql = "UPDATE TheLoai SET HoatDong = 0 " +
+                "WHERE id_TheLoai = ? AND HoatDong = 1 " +
+                "AND NOT EXISTS (SELECT 1 FROM sach_theloai WHERE id_TheLoai = ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+            ps.setInt(2, id);
+            if (ps.executeUpdate() > 0) {
+                return true;
+            }
+            if (hasBooks(id)) {
+                throw new IllegalStateException("Không thể xóa thể loại vì đã có sách thuộc thể loại này.");
+            }
             return false;
+        } catch (SQLException e) {
+            throw new RuntimeException("TheLoaiDAO.softDelete failed", e);
+        }
+    }
+
+    public boolean hasBooks(int id) {
+        String sql = "SELECT 1 FROM sach_theloai WHERE id_TheLoai = ? LIMIT 1";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("TheLoaiDAO.hasBooks failed", e);
         }
     }
 
